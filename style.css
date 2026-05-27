@@ -1408,6 +1408,13 @@ input[type="date"]::placeholder {
   color: #fff !important;
 }
 
+.book-select optgroup {
+  background-color: #000 !important;
+  color: #ff2f3b !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
+}
+
     @media (max-width: 600px) {
       .book-input,
       .book-select {

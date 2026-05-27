@@ -180,9 +180,25 @@
 
         <select class="book-select" name="treatment" required>
           <option value="" disabled selected>Select Treatment</option>
-          <option value="facial">Facial</option>
-          <option value="hair">Hair</option>
-          <option value="skin">Skin</option>
+          <optgroup label="Hair Care">
+            <option value="Eyebrow Transplant">Eyebrow Transplant</option>
+            <option value="Stem X Pro">Stem X Pro</option>
+            <option value="Mesotherapy">Mesotherapy</option>
+            <option value="Oxygen Laser Therapy">Oxygen Laser Therapy</option>
+            <option value="Scalp Micropigmentation">Scalp Micropigmentation</option>
+            <option value="Hair Transplant">Hair Transplant</option>
+            <option value="RegenPro9 – GFC Therapy">RegenPro9 – GFC Therapy</option>
+          </optgroup>
+          <optgroup label="Skin Care">
+            <option value="Microblading">Microblading</option>
+            <option value="Wart Removal">Wart Removal</option>
+            <option value="Laser Hair Reduction">Laser Hair Reduction</option>
+            <option value="Hydrafacial">Hydrafacial</option>
+            <option value="Q-Switch">Q-Switch</option>
+            <option value="Skin Brightening">Skin Brightening</option>
+            <option value="RF Anti-Aging Facial">RF Anti-Aging Facial</option>
+            <option value="Wrinkle Reduction Therapy">Wrinkle Reduction Therapy</option>
+          </optgroup>
         </select>
 
         <div class="book-button-wrapper">
@@ -271,7 +287,6 @@
 
         const form = e.target;
 
-        // Toastify show function
         function showToast(message, isError = false) {
           Toastify({
             text: message,
@@ -284,13 +299,24 @@
           }).showToast();
         }
 
+        const timeSlotLabels = {
+          "10-11": "10:00 AM - 11:00 AM",
+          "11-12": "11:00 AM - 12:00 PM",
+          "12-13": "12:00 PM - 1:00 PM",
+          "13-14": "1:00 PM - 2:00 PM",
+          "14-15": "2:00 PM - 3:00 PM",
+          "15-16": "3:00 PM - 4:00 PM",
+          "16-17": "4:00 PM - 5:00 PM",
+          "17-18": "5:00 PM - 6:00 PM",
+        };
+
         const data = {
-          firstName: form.firstName.value.trim(),
-          lastName: form.lastName.value.trim(),
+          first_name: form.firstName.value.trim(),
+          last_name: form.lastName.value.trim(),
           email: form.email.value.trim(),
-          Mobile: form.phone.value.trim(), // ✅ fix here
+          phone: form.phone.value.trim(),
           date: form.date.value,
-          time: form.timeSlot.value,
+          time_slot: timeSlotLabels[form.timeSlot.value] || form.timeSlot.value,
           treatment: form.treatment.value,
         };
 
@@ -298,18 +324,16 @@
 
         try {
           const response = await fetch(
-            "https://schoolcommunication-gmdtekepd3g3ffb9.canadacentral-01.azurewebsites.net/api/postMSMSForm/growandglowdemoForm",
+            "https://adgrohairgloskinvellore.in/api/email.php",
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer 123",
               },
               body: JSON.stringify(data),
             }
           );
 
-          // 🔹 log raw response text for debugging
           const rawResponse = await response.text();
           console.log("Raw response:", rawResponse);
 
@@ -321,7 +345,7 @@
           }
 
           if (response.ok && !result.error) {
-            showToast("Email sent successfully!");
+            showToast("Appointment booked successfully!");
 
             setTimeout(() => {
               window.location.href = "thankyou.html";

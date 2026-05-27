@@ -172,19 +172,15 @@
             </div>
             <div class="mb-3">
               <select class="form-control" id="appointmentTime" required>
-                <option value="">Select Time Slot</option>
-                <option>8 AM - 9 AM</option>
-                <option>9 AM - 10 AM</option>
-                <option>10 AM - 11 AM</option>
-                <option>11 AM - 12 PM</option>
-                <option>12 PM - 1 PM</option>
-                <option>1 PM - 2 PM</option>
-                <option>2 PM - 3 PM</option>
-                <option>3 PM - 4 PM</option>
-                <option>4 PM - 5 PM</option>
-                <option>5 PM - 6 PM</option>
-                <option>6 PM - 7 PM</option>
-                <option>7 PM - 8 PM</option>
+                <option value="" disabled selected>Select Time Slot</option>
+                <option value="10-11">10:00 AM - 11:00 AM</option>
+                <option value="11-12">11:00 AM - 12:00 PM</option>
+                <option value="12-13">12:00 PM - 1:00 PM</option>
+                <option value="13-14">1:00 PM - 2:00 PM</option>
+                <option value="14-15">2:00 PM - 3:00 PM</option>
+                <option value="15-16">3:00 PM - 4:00 PM</option>
+                <option value="16-17">4:00 PM - 5:00 PM</option>
+                <option value="17-18">5:00 PM - 6:00 PM</option>
               </select>
             </div>
             <div class="mb-3">
@@ -314,39 +310,58 @@
     document.getElementById("appointmentForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      // ✅ Match backend JSON structure exactly
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+
+      const timeSlotLabels = {
+        "10-11": "10:00 AM - 11:00 AM",
+        "11-12": "11:00 AM - 12:00 PM",
+        "12-13": "12:00 PM - 1:00 PM",
+        "13-14": "1:00 PM - 2:00 PM",
+        "14-15": "2:00 PM - 3:00 PM",
+        "15-16": "3:00 PM - 4:00 PM",
+        "16-17": "4:00 PM - 5:00 PM",
+        "17-18": "5:00 PM - 6:00 PM",
+      };
+      const timeValue = document.getElementById("appointmentTime").value;
+
       const data = {
-        firstName: document.getElementById("firstName").value.trim(),
-        lastName: document.getElementById("lastName").value.trim(),
+        name: (firstName + " " + lastName).trim(),
         email: document.getElementById("email").value.trim(),
         phone: document.getElementById("mobile").value.trim(),
         date: document.getElementById("appointmentDate").value,
-        time: document.getElementById("appointmentTime").value,
-        message: document.getElementById("message").value.trim()
+        time: timeSlotLabels[timeValue] || timeValue,
+        treatment: "General Inquiry",
+        message: document.getElementById("message").value.trim(),
+        source: "Website Form",
       };
 
       console.log("Data being sent:", data);
 
       try {
-        const response = await fetch("https://schoolcommunication-gmdtekepd3g3ffb9.canadacentral-01.azurewebsites.net/api/postMSMSForm/adGrowHair", {
+        const response = await fetch("https://adgrohairgloskinvellore.in/api/email.php", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer 123"
+            "Content-Type": "application/json"
           },
           body: JSON.stringify(data)
         });
 
-        const result = await response.json();
-        console.log("API Response:", result);
+        const rawResponse = await response.text();
+        console.log("Raw response:", rawResponse);
 
-        if (!result.error) {
-          // ✅ Success
-          alert("✅ " + result.message);
+        let result = {};
+        try {
+          result = JSON.parse(rawResponse);
+        } catch (err) {
+          console.warn("Response is not valid JSON");
+        }
+
+        if (response.ok && !result.error) {
+          alert("✅ " + (result.message || "Message sent successfully!"));
           document.getElementById("appointmentForm").reset();
         } else {
-          // ❌ Backend returned an error message
-          alert("⚠️ " + result.message);
+          alert("⚠️ " + (result.message || rawResponse || "Something went wrong."));
         }
       } catch (error) {
         console.error("Error:", error);
